@@ -1,0 +1,12 @@
+[
+    {
+        "value": "github",
+        "label": "Github",
+        "icon": "/src/assets/github-logo.png"
+    },
+    {
+        "value": "linkedin",
+        "label": "LinkedIn",
+        "icon": "/src/assets/linkedIn-logo.png"
+    }
+]
