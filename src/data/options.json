@@ -8,5 +8,10 @@
         "value": "linkedin",
         "label": "LinkedIn",
         "icon": "/src/assets/linkedIn-logo.png"
+    },
+    {
+        "value": "youtube",
+        "label": "YouTube",
+        "icon": "/src/assets/youtube-logo.png"
     }
 ]

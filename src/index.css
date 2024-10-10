@@ -1,11 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-    :root {
-        --font-inter: "Inter", sans-serif;
-    }
+  :root {
+    --color-primary: 99 59 254;
+    --color-muted: 75 85 99;
+    --font-inter: "Inter", sans-serif;
+  }
+}
+
+.custom-shadow {
+  -webkit-box-shadow: 5px 5px 50px -15px rgba(143, 143, 143, 0.5);
+  -moz-box-shadow: 5px 5px 50px -15px rgba(143, 143, 143, 0.5);
+  box-shadow: 5px 5px 50px -15px rgba(143, 143, 143, 0.5);
 }

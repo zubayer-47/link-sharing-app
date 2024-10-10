@@ -1,15 +1,14 @@
-
-import { ChevronDown } from 'lucide-react';
-import { FC, useState } from 'react';
-import { Option } from '../pages/home/components/LinkItem';
-import options from '../data/options.json'
+import { ChevronDown } from "lucide-react";
+import { FC, useState } from "react";
+import options from "../data/options.json";
+import { Option } from "../pages/home/partials/LinkItem";
 
 type Props = {
   selectedOption: Option;
   getSelectedOption: (option: Option) => void;
-}
+};
 
-const CustomSelect: FC<Props> = ({getSelectedOption, selectedOption}) => {
+const CustomSelect: FC<Props> = ({ getSelectedOption, selectedOption }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -24,28 +23,34 @@ const CustomSelect: FC<Props> = ({getSelectedOption, selectedOption}) => {
   return (
     <div className="relative w-full">
       <div
-        className="bg-gray-50 border border-gray-200 rounded-md p-2 w-full flex justify-between items-center cursor-pointer"
+        className="flex w-full cursor-pointer items-center justify-between rounded-md border border-gray-200 bg-gray-50 p-2"
         onClick={toggleDropdown}
       >
         <span className="mr-2 flex items-center gap-2">
-          <img src={selectedOption.icon} className='w-5 h-5' alt='' />
-          {selectedOption.label}</span>
-        <span className=''>
+          <img src={selectedOption.icon} className="h-5 w-full" alt="" />
+          {selectedOption.label}
+        </span>
+        <span className="">
           <ChevronDown />
         </span>
       </div>
 
       {isOpen && (
-        <ul className="absolute z-10 mt-1 w-full border border-gray-300 bg-white rounded-md shadow-lg">
+        <ul className="absolute z-10 mt-1 w-full rounded-md border border-gray-300 bg-white shadow-lg">
           {options.map((option: Option) => (
             <li
               key={option.value}
-              className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
+              className="flex cursor-pointer items-center p-2 hover:bg-gray-100"
               onClick={() => handleOptionClick(option)}
             >
               <span className="mr-2 flex items-center gap-2">
-                <img src={option.icon} className='w-5 h-5' alt='' />
-                {option.label}</span>
+                <img
+                  src={option.icon}
+                  className="h-5 w-full object-cover"
+                  alt=""
+                />
+                {option.label}
+              </span>
             </li>
           ))}
         </ul>

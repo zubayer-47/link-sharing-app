@@ -12,6 +12,10 @@ export default {
       fontFamily: {
         inter: ['var(--font-inter)'],
       },
+      colors: {
+        primary: "rgb(var(--color-primary))",
+        muted: "rgb(var(--color-muted))"
+      }
     },
   },
   plugins: [],
