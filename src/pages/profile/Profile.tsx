@@ -1,27 +1,35 @@
 import { Image, Save } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
-import githubLogo from "../../assets/github-vector-logo.png";
-import linkedInLogo from "../../assets/linkedIn.png";
 import phone_image from "../../assets/phone.png";
-import youtubeLogo from "../../assets/youtube-logo.png";
 import zdevp_pic from "../../assets/zubayer.jpg";
+import Input from "../../components/Input";
 import LinkItem from "../../components/LinkItem";
+import LinkPlaceholder from "../../components/LinkPlaceholder";
+import useData from "../../hooks/useData";
 
 interface FormData {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
+}
+
+interface FormErrors {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
 }
 
 export default function Profile() {
   const [selectedFile, setSelectedFile] = useState<File>();
   const [imagePreview, setImagePreview] = useState("");
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
   });
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const { state, setProfileInfo } = useData();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -41,13 +49,34 @@ export default function Profile() {
     // You can handle the file upload here if needed
     console.log("File submitted:", { selectedFile, formData });
 
+    const { email, last_name, first_name } = formData;
+
+    if (!first_name || !last_name) {
+      toast.error("First name and last name are required.");
+
+      setFormErrors(() => ({
+        ...(first_name
+          ? { first_name: "" }
+          : { first_name: "First name is required." }),
+        ...(last_name
+          ? { last_name: "" }
+          : { last_name: "Last name is required." }),
+      }));
+
+      return;
+    }
+
+    setFormErrors({});
+
+    setProfileInfo({
+      email,
+      first_name,
+      last_name,
+      profile_pic: imagePreview || zdevp_pic,
+    });
+
     toast("Your changes have been successfully saved!", {
       icon: <Save />,
-      style: {
-        // borderRadius: '10px',
-        background: "#333",
-        color: "#fff",
-      },
     });
   };
 
@@ -64,40 +93,37 @@ export default function Profile() {
             <img src={phone_image} alt="phone image" />
 
             <img
-              src={zdevp_pic}
+              src={imagePreview || state.profile_pic}
               alt="profile picture"
               className="absolute right-[6.5rem] top-16 h-24 w-24 rounded-full object-cover ring ring-primary"
             />
 
-            <div className="absolute right-12 top-44 text-center">
-              <h1 className="text-2xl font-bold">A B M Zubayer</h1>
-              <span className="text-muted">zubayerjs.dev@gmail.com</span>
+            <div className="absolute top-44 w-full text-center">
+              <h1 className="text-2xl font-bold">
+                {formData.first_name || state.first_name}{" "}
+                {formData.last_name || state.last_name}
+              </h1>
+              <span
+                className={`text-muted ${state.email ? "block" : "hidden"}`}
+              >
+                {formData.email || state.email}
+              </span>
             </div>
 
             <div className="absolute top-[17.5rem] flex w-full flex-col gap-3 px-9">
-              <LinkItem
-                logo={githubLogo}
-                alt="github logo"
-                name="GitHub"
-                color="black"
-                to="https://github.com/zubayer-47"
-              />
+              {state.links.map((link) => (
+                <LinkItem
+                  key={link.id}
+                  order={link.order}
+                  logo={link.logo}
+                  alt={link.alt}
+                  name={link.name}
+                  color={link.color}
+                  to={link.to}
+                />
+              ))}
 
-              <LinkItem
-                logo={youtubeLogo}
-                alt="youtube logo"
-                name="YouTube"
-                color="red"
-                to="https://github.com/zubayer-47"
-              />
-
-              <LinkItem
-                logo={linkedInLogo}
-                alt="linkedin logo"
-                name="LinkedIn"
-                color="blue"
-                to="https://github.com/zubayer-47"
-              />
+              <LinkPlaceholder linksLength={state.links.length} />
             </div>
           </div>
         </div>
@@ -110,10 +136,10 @@ export default function Profile() {
             Add your details to create a personal touch to your profile
           </p>
 
-          <div className="flex w-full select-none flex-col gap-2 rounded-lg bg-gray-100 p-4 md:flex-row md:items-center md:justify-between md:gap-10">
+          <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-100 p-4 md:flex-row md:items-center md:justify-between md:gap-10">
             <h1 className="text-muted">Profile picture</h1>
 
-            <div className="flex flex-col items-center gap-3 md:flex-row">
+            <div className="flex flex-col items-center gap-10 md:flex-row">
               <div className="group relative size-40 overflow-hidden">
                 <img
                   src={imagePreview || zdevp_pic}
@@ -136,7 +162,7 @@ export default function Profile() {
                 </label>
               </div>
 
-              <p className="text-muted">
+              <p className="text-sm text-muted">
                 Image must be below 1024&#x2715;1024px. <br />
                 Use PNG, JPG or BMP format
               </p>
@@ -144,56 +170,35 @@ export default function Profile() {
           </div>
 
           <div className="space-y-4 rounded-lg bg-gray-100 p-4">
-            <div className="flex w-full flex-col md:flex-row md:items-center md:justify-between md:gap-5">
-              <label
-                htmlFor="first_name"
-                className="text-muted after:content-['*']"
-              >
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                id="first_name"
-                className="rounded-md border border-gray-200 bg-gray-50 p-2 shadow-primary focus:border-primary focus:shadow-md focus:outline-none"
-                placeholder="First Name"
-                value={formData.firstName}
-                onChange={handleChange}
-              />
-            </div>
+            <Input
+              label="First Name"
+              name="first_name"
+              id="first_name"
+              value={formData.first_name}
+              defaultValue={state.first_name}
+              onChange={handleChange}
+              error={formErrors.first_name}
+            />
 
-            <div className="flex w-full flex-col md:flex-row md:items-center md:justify-between md:gap-5">
-              <label
-                htmlFor="last_name"
-                className="text-muted after:content-['*']"
-              >
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                id="last_name"
-                className="rounded-md border border-gray-200 bg-gray-50 p-2 shadow-primary focus:border-primary focus:shadow-md focus:outline-none"
-                placeholder="Last Name"
-                value={formData.lastName}
-                onChange={handleChange}
-              />
-            </div>
+            <Input
+              label="Last Name"
+              name="last_name"
+              id="last_name"
+              value={formData.last_name}
+              defaultValue={state.last_name}
+              onChange={handleChange}
+              error={formErrors.last_name}
+            />
 
-            <div className="flex w-full flex-col md:flex-row md:items-center md:justify-between md:gap-5">
-              <label htmlFor="email" className="text-muted">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                className="rounded-md border border-gray-200 bg-gray-50 p-2 shadow-primary focus:border-primary focus:shadow-md focus:outline-none"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
+            <Input
+              label="Email"
+              name="email"
+              id="email"
+              value={formData.email}
+              defaultValue={state.email}
+              onChange={handleChange}
+              type="email"
+            />
           </div>
         </div>
 

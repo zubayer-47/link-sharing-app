@@ -1,11 +1,53 @@
-import Phone from "../../assets/Phone";
-import LinkItem from "./partials/LinkItem";
+import phone_image from "../../assets/phone.png";
+import LinkItem from "../../components/LinkItem";
+import LinkPlaceholder from "../../components/LinkPlaceholder";
+import useData from "../../hooks/useData";
+import EditorLinkItem from "./partials/EditorLinkItem";
 
 const Home = () => {
+  const { state } = useData();
+
   return (
     <div className="flex h-full w-full items-stretch justify-center gap-4">
       <div className="hidden rounded-2xl bg-gray-50 p-5 lg:block">
-        <Phone />
+        <div className="flex h-full items-center justify-center">
+          <div className="relative h-fit w-fit">
+            <img src={phone_image} alt="phone image" />
+
+            <img
+              src={state.profile_pic}
+              alt="profile picture"
+              className="absolute right-[6.5rem] top-16 h-24 w-24 rounded-full object-cover ring ring-primary"
+            />
+
+            <div className="absolute top-44 w-full text-center">
+              <h1 className="text-2xl font-bold">
+                {state.first_name} {state.last_name}
+              </h1>
+              <span
+                className={`text-muted ${state.email ? "block" : "hidden"}`}
+              >
+                {state.email}
+              </span>
+            </div>
+
+            <div className="absolute top-[17.5rem] flex w-full flex-col gap-3 px-9">
+              {state.links.map((link) => (
+                <LinkItem
+                  key={link.id}
+                  order={link.order}
+                  logo={link.logo}
+                  alt={link.alt}
+                  name={link.name}
+                  color={link.color}
+                  to={link.to}
+                />
+              ))}
+
+              <LinkPlaceholder linksLength={state.links.length} />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="rounded-2xl bg-gray-50 pt-10">
@@ -24,8 +66,8 @@ const Home = () => {
           </button>
 
           <div className="my-6 flex flex-col gap-4">
-            <LinkItem />
-            <LinkItem />
+            <EditorLinkItem />
+            <EditorLinkItem />
           </div>
         </div>
 

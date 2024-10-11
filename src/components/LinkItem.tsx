@@ -1,14 +1,9 @@
 import { ArrowRight } from "lucide-react";
 
 import { Link } from "react-router-dom";
+import { LinkType } from "../context/types";
 
-type Props = {
-  to: string;
-  logo: string;
-  alt: string;
-  name: string;
-  color: "red" | "black" | "blue";
-};
+type Props = Omit<LinkType, "id">;
 
 export default function LinkItem({ alt, color, logo, name, to }: Props) {
   const bg = {

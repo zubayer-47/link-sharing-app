@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { FC, useState } from "react";
 import options from "../data/options.json";
-import { Option } from "../pages/home/partials/LinkItem";
+import { Option } from "../pages/home/partials/EditorLinkItem";
 
 type Props = {
   selectedOption: Option;

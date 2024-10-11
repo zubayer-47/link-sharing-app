@@ -9,10 +9,8 @@ export type Option = {
   icon: string;
 };
 
-const LinkItem = () => {
+const EditorLinkItem = () => {
   const [selectedOption, setSelectedOption] = useState(options[0]);
-
-  console.log(selectedOption.icon);
 
   const getSelectedOption = (option: Option) => {
     setSelectedOption(option);
@@ -47,4 +45,4 @@ const LinkItem = () => {
   );
 };
 
-export default LinkItem;
+export default EditorLinkItem;
