@@ -1,14 +1,14 @@
-import { CircleUserRound, Eye, Link } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { CircleUserRound, Eye, LinkIcon } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
 import logo from "../assets/logo.webp";
 
 export const Nav = () => {
   return (
     <nav className="flex items-center justify-between rounded-b-lg bg-gray-50 p-3 md:m-4 md:rounded-lg">
-      <div className="flex items-center gap-2">
+      <Link to="/" className="flex items-center gap-2">
         <img src={logo} alt="logo" className="h-10 w-10" />
         <h1 className="hidden text-2xl font-bold md:block">devlinks</h1>
-      </div>
+      </Link>
       <div className="flex items-center gap-1 md:gap-8">
         <NavLink
           to="/"
@@ -16,7 +16,7 @@ export const Nav = () => {
             return `flex items-center gap-2 rounded-md px-4 py-2 font-medium text-gray-600 transition-colors ${isActive ? "bg-primary/10 text-primary" : "bg-transparent text-gray-600"}`;
           }}
         >
-          <Link className="h-5 w-5" />
+          <LinkIcon className="h-5 w-5" />
           <span className="hidden md:block">Links</span>
         </NavLink>
         <NavLink

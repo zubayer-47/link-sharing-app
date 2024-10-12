@@ -8,7 +8,12 @@ export default function LinkPlaceholder({
       {linksLength < 3 &&
         new Array(3 - linksLength)
           .fill(0)
-          .map(() => <div className="w-full rounded-lg bg-gray-200 p-5"></div>)}
+          .map((v) => (
+            <div
+              key={v + 1}
+              className="w-full rounded-lg bg-gray-200 p-5"
+            ></div>
+          ))}
     </>
   );
 }

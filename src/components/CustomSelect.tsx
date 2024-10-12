@@ -1,7 +1,18 @@
 import { ChevronDown } from "lucide-react";
 import { FC, useState } from "react";
-import options from "../data/options.json";
+import githubLogo from "../assets/github-logo.png";
+import linkedInLogo from "../assets/linkedIn-logo.png";
+import youtubeLogo from "../assets/youtube-logo.png";
+import optionsData from "../data/options.json";
 import { Option } from "../pages/home/partials/EditorLinkItem";
+
+const optionLogos = {
+  github: githubLogo,
+  linkedin: linkedInLogo,
+  youtube: youtubeLogo,
+};
+
+const options = optionsData as Option[];
 
 type Props = {
   selectedOption: Option;
@@ -27,25 +38,27 @@ const CustomSelect: FC<Props> = ({ getSelectedOption, selectedOption }) => {
         onClick={toggleDropdown}
       >
         <span className="mr-2 flex items-center gap-2">
-          <img src={selectedOption.icon} className="h-5 w-full" alt="" />
+          <img
+            src={optionLogos[selectedOption.key]}
+            className="h-5 w-full"
+            alt=""
+          />
           {selectedOption.label}
         </span>
-        <span className="">
-          <ChevronDown />
-        </span>
+        <ChevronDown />
       </div>
 
       {isOpen && (
         <ul className="absolute z-10 mt-1 w-full rounded-md border border-gray-300 bg-white shadow-lg">
           {options.map((option: Option) => (
             <li
-              key={option.value}
+              key={option.key}
               className="flex cursor-pointer items-center p-2 hover:bg-gray-100"
               onClick={() => handleOptionClick(option)}
             >
               <span className="mr-2 flex items-center gap-2">
                 <img
-                  src={option.icon}
+                  src={optionLogos[option.key]}
                   className="h-5 w-full object-cover"
                   alt=""
                 />

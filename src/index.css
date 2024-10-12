@@ -23,3 +23,11 @@
   -moz-box-shadow: 1px -2px 50px -14px rgba(99, 59, 254, 1);
   box-shadow: 1px -2px 50px -14px rgba(99, 59, 254, 1);
 }
+
+.indicator.top {
+  border-top: 4px solid rgb(var(--color-primary));
+}
+
+.indicator.bottom {
+  border-bottom: 4px solid rgb(var(--color-primary));
+}

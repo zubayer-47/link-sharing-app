@@ -1,11 +1,9 @@
 import { Image, Save } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
-import phone_image from "../../assets/phone.png";
 import zdevp_pic from "../../assets/zubayer.jpg";
 import Input from "../../components/Input";
-import LinkItem from "../../components/LinkItem";
-import LinkPlaceholder from "../../components/LinkPlaceholder";
+import PhonePreview from "../../components/PhonePreview";
 import useData from "../../hooks/useData";
 
 interface FormData {
@@ -87,50 +85,16 @@ export default function Profile() {
 
   return (
     <div className="flex h-full w-full items-stretch justify-center gap-4">
-      <div className="hidden rounded-lg bg-gray-50 p-5 lg:block">
-        <div className="flex h-full items-center justify-center">
-          <div className="relative h-fit w-fit">
-            <img src={phone_image} alt="phone image" />
-
-            <img
-              src={imagePreview || state.profile_pic}
-              alt="profile picture"
-              className="absolute right-[6.5rem] top-16 h-24 w-24 rounded-full object-cover ring ring-primary"
-            />
-
-            <div className="absolute top-44 w-full text-center">
-              <h1 className="text-2xl font-bold">
-                {formData.first_name || state.first_name}{" "}
-                {formData.last_name || state.last_name}
-              </h1>
-              <span
-                className={`text-muted ${state.email ? "block" : "hidden"}`}
-              >
-                {formData.email || state.email}
-              </span>
-            </div>
-
-            <div className="absolute top-[17.5rem] flex w-full flex-col gap-3 px-9">
-              {state.links.map((link) => (
-                <LinkItem
-                  key={link.id}
-                  order={link.order}
-                  logo={link.logo}
-                  alt={link.alt}
-                  name={link.name}
-                  color={link.color}
-                  to={link.to}
-                />
-              ))}
-
-              <LinkPlaceholder linksLength={state.links.length} />
-            </div>
-          </div>
-        </div>
-      </div>
+      <PhonePreview
+        email={formData.email}
+        first_name={formData.first_name}
+        last_name={formData.last_name}
+        profile_pic={imagePreview || zdevp_pic}
+        // links={[]}
+      />
 
       <div className="rounded-lg bg-gray-50 pt-10">
-        <div className="mb-20 flex flex-col gap-4 px-7 md:mb-28">
+        <div className="mb-20 flex flex-col gap-4 px-7">
           <h1 className="mb-1 text-2xl font-bold">Profile Details</h1>
           <p className="mb-4 text-wrap text-gray-600/70">
             Add your details to create a personal touch to your profile
