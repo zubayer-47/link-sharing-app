@@ -1,4 +1,4 @@
-import { Image, Save } from "lucide-react";
+import { Image, SaveIcon } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 import zdevp_pic from "../../assets/zubayer.jpg";
@@ -74,7 +74,7 @@ export default function Profile() {
     });
 
     toast("Your changes have been successfully saved!", {
-      icon: <Save />,
+      icon: <SaveIcon />,
     });
   };
 

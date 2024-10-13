@@ -6,14 +6,18 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
+import { SaveIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { v4 as uuidv4 } from "uuid";
+import githubLogo from "../../assets/github-vector-logo.png";
 import PhonePreview from "../../components/PhonePreview";
 import { LinkType } from "../../context/types";
 import useData from "../../hooks/useData";
 import EditorLinkItem from "./partials/EditorLinkItem";
 
 const Home = () => {
-  const { state } = useData();
+  const { state, updateLinks } = useData();
   const [links, setLinks] = useState(state.links);
 
   const reorderLinks = useCallback(
@@ -77,7 +81,12 @@ const Home = () => {
             });
 
             if (updatedLinks) {
-              setLinks(updatedLinks);
+              const updatedLinksWithOrder = updatedLinks.map((link, index) => ({
+                ...link,
+                order: index + 1,
+              }));
+
+              setLinks(updatedLinksWithOrder);
             }
           }
         }
@@ -91,6 +100,28 @@ const Home = () => {
       onDrop: handleDrop,
     });
   }, [links, handleDrop]);
+
+  const addNewLink = () => {
+    const newLink: LinkType = {
+      id: uuidv4(),
+      order: links.length + 1,
+      name: "GitHub",
+      logo: githubLogo,
+      color: "black",
+      alt: "github",
+      to: "",
+    };
+
+    setLinks((prev) => [...prev, newLink]);
+    updateLinks([...links, newLink]);
+  };
+
+  const handleSave = () => {
+    toast("Your changes have been successfully saved!", {
+      icon: <SaveIcon />,
+    });
+    updateLinks(links);
+  };
 
   return (
     <div className="flex w-full items-stretch justify-center gap-4">
@@ -107,6 +138,7 @@ const Home = () => {
 
             <button
               type="button"
+              onClick={addNewLink}
               className="w-full rounded-md border border-primary bg-transparent px-4 py-2 font-medium text-primary transition-colors hover:bg-primary/90 hover:text-gray-100"
             >
               &#43; Add new link
@@ -125,6 +157,7 @@ const Home = () => {
         <div className="mb-5 flex justify-end pr-7">
           <button
             type="button"
+            onClick={handleSave}
             className="w-fit rounded-md border border-primary bg-primary px-4 py-2 font-medium text-gray-100 transition-colors hover:border-primary/90 hover:bg-primary/90"
           >
             Save

@@ -9,11 +9,14 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import clsx from "clsx";
 import { Equal } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import CustomSelect from "../../../components/CustomSelect";
 import { LinkType } from "../../../context/types";
+import useData from "../../../hooks/useData";
+import { debounce } from "../../../lib/debounce";
 
 export type KeyType = "github" | "linkedin" | "youtube";
 export type Option = {
@@ -22,9 +25,9 @@ export type Option = {
   key: KeyType;
 };
 
-type Props = LinkType & { index: number };
+type Props = LinkType & { index: number; className?: string };
 
-const EditorLinkItem = ({ index, ...link }: Props) => {
+const EditorLinkItem = ({ index, className, ...link }: Props) => {
   const [selectedOption, setSelectedOption] = useState<Option>({
     icon: link.logo,
     label: link.name,
@@ -34,16 +37,20 @@ const EditorLinkItem = ({ index, ...link }: Props) => {
   const [isDragging, setIsDragging] = useState(false);
   const [closestEdge, setClosestEdge] = useState<string | null>(null);
   const [dndPreview, setDndPreview] = useState<HTMLElement | null>(null);
-  const ref = useRef<HTMLButtonElement | null>(null);
+  const { updateSingleLink } = useData();
+
+  const draggableRef = useRef<HTMLButtonElement | null>(null);
+  const dropTargetRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const el = ref.current;
+    const draggableEl = draggableRef.current;
+    const dropTargetEl = dropTargetRef.current;
 
-    if (!el) return;
+    if (!draggableEl || !dropTargetEl) return;
 
     return combine(
       draggable({
-        element: el,
+        element: draggableEl,
         getInitialData: () => ({ type: "link", id: link.id }),
 
         onGenerateDragPreview({ nativeSetDragImage }) {
@@ -66,7 +73,7 @@ const EditorLinkItem = ({ index, ...link }: Props) => {
       }),
 
       dropTargetForElements({
-        element: el,
+        element: dropTargetEl,
         getData: ({ input, element }) => {
           const data = { type: "link", id: link.id };
 
@@ -76,7 +83,7 @@ const EditorLinkItem = ({ index, ...link }: Props) => {
             allowedEdges: ["top", "bottom"],
           });
         },
-        getIsSticky: () => true,
+        // getIsSticky: () => true,
         onDragEnter(args) {
           if (args.source.data.id !== link.id) {
             setClosestEdge(extractClosestEdge(args.self.data));
@@ -84,7 +91,7 @@ const EditorLinkItem = ({ index, ...link }: Props) => {
         },
 
         onDrag({ self, source }) {
-          const isSource = source.element === el;
+          const isSource = source.element === dropTargetEl;
           if (isSource) {
             setClosestEdge(null);
             return;
@@ -124,27 +131,54 @@ const EditorLinkItem = ({ index, ...link }: Props) => {
     setSelectedOption(option);
   };
 
+  const debouncedUpdateSingleLink = useMemo(
+    () =>
+      debounce((updatedLink: LinkType) => {
+        updateSingleLink(updatedLink);
+      }, 1000),
+    [updateSingleLink],
+  );
+
+  const handleLinkUpdate = (updatedLink: LinkType) => {
+    debouncedUpdateSingleLink(updatedLink);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
+    handleLinkUpdate({
+      ...link,
+      logo: selectedOption.icon,
+      name: selectedOption.label,
+      to: newValue,
+    });
   };
 
   return (
     <>
       <div
-        className={`indicator select-none space-y-2 rounded-lg bg-gray-100 p-4 ${isDragging ? "bg-gray-400 shadow-lg" : ""} ${closestEdge}`}
+        // className={`indicator select-none space-y-2 rounded-lg bg-gray-100 p-4 ${isDragging ? "bg-gray-400 shadow-lg" : ""} ${closestEdge}`}
+        className={clsx(
+          "indicator select-none rounded-lg bg-gray-100 p-4",
+          {
+            "bg-gray-400 shadow-lg": isDragging,
+          },
+          closestEdge,
+          className,
+        )}
+        ref={dropTargetRef}
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1">
-            <button type="button" ref={ref}>
+            <button type="button" ref={draggableRef}>
               <Equal className="text-muted" />
             </button>
-            <span className="text-muted">Link #1</span>
+            <span className="text-muted">Link #{link.order}</span>
           </div>
           <button type="button" className="text-muted hover:text-gray-800">
             Remove
           </button>
         </div>
-
         <CustomSelect
           getSelectedOption={getSelectedOption}
           selectedOption={selectedOption}
@@ -164,7 +198,11 @@ const EditorLinkItem = ({ index, ...link }: Props) => {
 
       {dndPreview &&
         ReactDOM.createPortal(
-          <EditorLinkItem {...link} index={index} />,
+          <EditorLinkItem
+            {...link}
+            index={index}
+            className="w-full bg-gray-300"
+          />,
           dndPreview,
         )}
     </>

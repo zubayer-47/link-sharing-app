@@ -20,7 +20,8 @@ const defaultContextValue: DefaultContextValueType = {
     links: [],
   },
   setProfileInfo() {},
-  updateLink() {},
+  updateSingleLink() {},
+  updateLinks() {},
 };
 
 export const DataContext = createContext(defaultContextValue);
@@ -50,8 +51,8 @@ const initialState: InitialStateType = {
     //   to: "https://github.com/zubayer-47",
     // },
     {
-      id: "3",
-      order: 3,
+      id: "2",
+      order: 2,
       name: "LinkedIn",
       logo: linkedInLogo,
       color: "blue",
@@ -74,12 +75,17 @@ const dataReducer = (
         email: action.payload.email,
         profile_pic: action.payload.profile_pic,
       };
-    case "UPDATE_LINK":
+    case "UPDATE_SINGLE_LINK":
       return {
         ...state,
         links: state.links.map((link) =>
           link.id === action.payload.id ? action.payload : link,
         ),
+      };
+    case "UPDATE_LINKS":
+      return {
+        ...state,
+        links: action.payload,
       };
     default:
       return state;
@@ -96,14 +102,20 @@ export default function DataProvider({ children }: PropsWithChildren) {
     });
   };
 
-  const updateLink = (link: LinkType) => {
-    dispatch({ type: "UPDATE_LINK", payload: link });
+  const updateSingleLink = (link: LinkType) => {
+    console.log("firing");
+    dispatch({ type: "UPDATE_SINGLE_LINK", payload: link });
+  };
+
+  const updateLinks = (links: LinkType[]) => {
+    dispatch({ type: "UPDATE_LINKS", payload: links });
   };
 
   const value = {
     state,
     setProfileInfo,
-    updateLink,
+    updateSingleLink,
+    updateLinks,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

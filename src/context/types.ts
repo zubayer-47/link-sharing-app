@@ -26,7 +26,8 @@ export type InitialStateType = {
 export type DefaultContextValueType = {
   state: InitialStateType;
   setProfileInfo: (info: ProfileInfoType) => void;
-  updateLink: (link: LinkType) => void;
+  updateSingleLink: (link: LinkType) => void;
+  updateLinks: (links: LinkType[]) => void;
 };
 
 export type Action =
@@ -34,4 +35,5 @@ export type Action =
       type: "SET_PROFILE_INFO";
       payload: ProfileInfoType;
     }
-  | { type: "UPDATE_LINK"; payload: LinkType };
+  | { type: "UPDATE_SINGLE_LINK"; payload: LinkType }
+  | { type: "UPDATE_LINKS"; payload: LinkType[] };
